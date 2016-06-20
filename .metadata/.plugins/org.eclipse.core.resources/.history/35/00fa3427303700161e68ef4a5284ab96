@@ -33,8 +33,9 @@ public class ConexaoBanco {
 			}
 		}
 		
-		public ResultSet executaSql(String sql) throws SQLException{
-			return this.stmt.executeQuery(sql);
+		public ResultSet executaSql(String sql){
+			this.stmt.executeQuery(sql);
 		}
 		
+		}
 }
