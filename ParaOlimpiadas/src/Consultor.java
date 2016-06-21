@@ -64,4 +64,16 @@ public class Consultor {
 		cb.fechaConexao();
 	return row;
 	}
+	
+	public static void executaSql(String query){
+		ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
+		cb.abrirConexao();
+		try {
+			ResultSet rs = cb.executaSql(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cb.fechaConexao();
+	}
 }

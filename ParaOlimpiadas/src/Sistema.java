@@ -214,13 +214,22 @@ public class Sistema extends Application {
 		*/
 		
 		// CONSULTA PESSOA -------------------------------------
-		Label SPtitulo = new Label("CONSULTAR PESSOA");
+		Label SPtitulo = new Label("PESSOA HOSPEDADA POR NACIONALIDADE");
 		SPtitulo.setFont(new Font(20));
-		//TODO: TABLE
+		
+		String sqlPessoaHotel = "select p.nome,p.nacionalidade,h.nomeHotel from pessoa p "+
+				"join reserva r on r.cpfPessoa = p.CPF_Passaporte "+
+				"join hotel h on h.idHotel = r.idHotel "+
+				"where r.dataEntrada>= SYSDATE and r.dataSaida<= SYSDATE";
+		TableView pessoaHotel = new TableView(Consultor.retornaTabelaConsulta(sqlPessoaHotel).getItems());
+
 		
 		VBox layoutSP = new VBox(20);
 		layoutSP.getChildren().addAll(SPtitulo);
 		layoutSP.setAlignment(Pos.TOP_CENTER);
+		
+		VBox layoutPH = new VBox(5);
+		layoutPH.getChildren().addAll(layoutSP,pessoaHotel);
 		
 		//OFERTA DISTANCIA HOTEL-ESTADIO
 				Label ofertaTitulo = new Label("MELHOR OFERTA PARA SEU BOLSO");
@@ -243,11 +252,11 @@ public class Sistema extends Application {
 				
 				estadiosCadastrados.setOnAction((event)->{
 					String sqlOferta = 
-							"select h.nome,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h"+
-							"join quarto q on q.idhotel = h.idhotel"+
-							"join distancia d on d.idhotel = h.idhotel"+
-							"join estadio e on e.idestadio = d.idestadio"+
-							"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and"+
+							"select h.nomeHotel,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h "+
+							"join quarto q on q.idhotel = h.idhotel "+
+							"join distancia d on d.idhotel = h.idhotel "+
+							"join estadio e on e.idestadio = d.idestadio "+
+							"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and "+
 							"e.nome = "+estadiosCadastrados.getValue();			
 					try {
 						TableView ofertas = Consultor.retornaTabelaConsulta(sqlOferta);
@@ -314,7 +323,7 @@ public class Sistema extends Application {
 		MenuBar navbar = new MenuBar();
 		Menu navP = new Menu("Pessoas");
 		MenuItem navPcad = new MenuItem("Cadastrar");
-		MenuItem navPcon = new MenuItem("Consultar");
+		MenuItem navPcon = new MenuItem("Pessoas hospedadas");
 		navP.getItems().addAll(navPcad, navPcon);
 		Menu navH = new Menu("Hotéis");
 		MenuItem navHcon = new MenuItem("Consultar");
@@ -345,7 +354,7 @@ public class Sistema extends Application {
 		
 		navPcon.setOnAction(e -> {
 			principal.getChildren().clear();
-			principal.getChildren().addAll(navbar, layoutSP);
+			principal.getChildren().addAll(navbar, layoutPH);
 		});
 		
 		navHcon.setOnAction(e -> {
