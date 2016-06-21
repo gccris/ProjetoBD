@@ -221,7 +221,8 @@ public class Sistema extends Application {
 				"join reserva r on r.cpfPessoa = p.CPF_Passaporte "+
 				"join hotel h on h.idHotel = r.idHotel "+
 				"where r.dataEntrada>= SYSDATE and r.dataSaida<= SYSDATE";
-		TableView pessoaHotel = new TableView(Consultor.retornaTabelaConsulta(sqlPessoaHotel).getItems());
+		TableView pessoaHotel = new TableView();
+		Consultor.alteraTabela(sqlPessoaHotel, pessoaHotel);
 
 		
 		VBox layoutSP = new VBox(20);
@@ -240,7 +241,7 @@ public class Sistema extends Application {
 				ObservableList<String> listEstadios = Consultor.retornaListConsulta(sqlEstadios);
 				ComboBox<String> estadiosCadastrados = new ComboBox<String>(listEstadios);
 				Label lbBandeirada = new Label("Preço bandeirada:");
-				TextField bandeirada = new TextField("0");
+				TextField bandeirada = new TextField("3.40");
 				HBox hBoxBuscaEstadio = new HBox(4);
 				hBoxBuscaEstadio.getChildren().addAll(escolhaEstadio,estadiosCadastrados,lbBandeirada,bandeirada);
 				
@@ -252,15 +253,15 @@ public class Sistema extends Application {
 				
 				estadiosCadastrados.setOnAction((event)->{
 					String sqlOferta = 
-							"select h.nomeHotel,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h "+
+							"select h.nomeHotel,h.estrelas,q.numero,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h "+
 							"join quarto q on q.idhotel = h.idhotel "+
 							"join distancia d on d.idhotel = h.idhotel "+
 							"join estadio e on e.idestadio = d.idestadio "+
-							"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and "+
-							"e.nome = "+estadiosCadastrados.getValue();			
+							"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = SYSDATE) and "+
+							"e.nome = '"+estadiosCadastrados.getValue()+"' "+
+							"order by precoTotal";
 					try {
-						TableView ofertas = Consultor.retornaTabelaConsulta(sqlOferta);
-						tableOfertas.setItems(ofertas.getItems());
+						Consultor.alteraTabela(sqlOferta, tableOfertas);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
