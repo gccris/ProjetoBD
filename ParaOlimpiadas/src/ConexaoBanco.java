@@ -37,4 +37,13 @@ public class ConexaoBanco {
 			return this.stmt.executeQuery(sql);
 		}
 		
+		public void fechaConexao(){
+			try {
+				this.stmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 }

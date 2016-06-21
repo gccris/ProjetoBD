@@ -1,5 +1,6 @@
 import javafx.application.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -210,6 +211,32 @@ public class Sistema extends Application {
 		
 		
 		// CONSULTA ESTADIO
+		
+		//OFERTA DISTANCIA HOTEL-ESTADIO
+		Label ofertaTitulo = new Label("MELHOR OFERTA PARA SEU BOLSO");
+		Label escolhaEstadio = new Label("Escolha o estádio em que você está:");
+		TableView<String> tableOfertas = new TableView<String>();
+		TextField bandeirada = new TextField("0");
+		String sqlEstadios = "select nome from estadio";
+		ObservableList<String> listEstadios = Consultor.retornaListConsulta(sqlEstadios);
+		ComboBox<String> estadiosCadastrados = new ComboBox<String>(listEstadios);
+		estadiosCadastrados.setOnAction((event)->{
+			String sqlOferta = 
+					"select h.nome,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h"+
+					"join quarto q on q.idhotel = h.idhotel"+
+					"join distancia d on d.idhotel = h.idhotel"+
+					"join estadio e on e.idestadio = d.idestadio"+
+					"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and"+
+					"e.nome = "+estadiosCadastrados.getValue();			
+			try {
+				TableView ofertas = Consultor.retornaTabelaConsulta(sqlOferta);
+				tableOfertas.setItems(ofertas.getItems());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
 		
 		// LAYOUT PRINCIPAL
 		
