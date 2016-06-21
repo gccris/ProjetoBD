@@ -44,6 +44,7 @@ public class Consultor {
         }
 		tvTeste.setItems(data);
 		
+		cb.fechaConexao();
 		return tvTeste;
 	}
 	
@@ -60,6 +61,7 @@ public class Consultor {
                 row.add(rs.getString(i));
             }
         }
+		cb.fechaConexao();
 	return row;
 	}
 }

@@ -1,9 +1,10 @@
 import javafx.application.*;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Sistema extends Application {
@@ -18,8 +19,9 @@ public class Sistema extends Application {
 	public void start(Stage primaryStage) throws Exception{
 		window = primaryStage;
 		
-		// INICIO
+		// INICIO --------------------------------------
 		Label titulo = new Label("SISTEMA PARAOLIMPÍADAS");
+		titulo.setFont(new Font(20));
 		Label disciplina = new Label("Base de Dados");
 		Label professora = new Label("Profª. Elaine Parros M. de Souza");
 		Label nome1 = new Label("Gabriel Campos Cristiano (8937138)");
@@ -28,24 +30,23 @@ public class Sistema extends Application {
 
 		VBox projeto = new VBox(7);
 		projeto.getChildren().addAll(titulo, disciplina, professora);
-		projeto.setAlignment(Pos.CENTER);
+		projeto.setAlignment(Pos.TOP_CENTER);
 		
 		VBox nomes = new VBox(7);
 		nomes.getChildren().addAll(nome1, nome2, nome3);
-		nomes.setAlignment(Pos.CENTER);
+		nomes.setAlignment(Pos.BOTTOM_CENTER);
 		
-		VBox layoutInicio = new VBox(30);
-		layoutInicio.getChildren().addAll(projeto, nomes);
-		layoutInicio.setAlignment(Pos.CENTER_RIGHT);
 		
-		// CADASTRO PESSOA
+		// CADASTRO PESSOA -------------------------------
 		Label CPtitulo = new Label("CADASTRAR PESSOA");
+		CPtitulo.setFont(new Font(20));
 		Label CPtipo = new Label("Tipo:");
 		ComboBox<String> CPcombo = new ComboBox<>();
 		CPcombo.getItems().addAll("Turista", "Comissão", "Taxista");
 		CPcombo.setValue("Turista");
 		HBox CPtipoH = new HBox(10);
 		CPtipoH.getChildren().addAll(CPtipo, CPcombo);
+		CPtipoH.setAlignment(Pos.CENTER_LEFT);
 		
 		Label CPnome = new Label("Nome:");
 		Label CPcpf = new Label("CPF/Passaporte:");
@@ -58,12 +59,19 @@ public class Sistema extends Application {
 		
 		HBox CPnomeH = new HBox(10);
 		CPnomeH.getChildren().addAll(CPnome, CPnomeT);
+		CPnomeH.setAlignment(Pos.CENTER_RIGHT);
+		HBox linha1 = new HBox (50);
+		linha1.getChildren().addAll(CPtipoH, CPnomeH);
+		linha1.setAlignment(Pos.CENTER_RIGHT);
 		HBox CPcpfH = new HBox(10);
 		CPcpfH.getChildren().addAll(CPcpf, CPcpfT);
+		CPcpfH.setAlignment(Pos.CENTER_RIGHT);
 		HBox CPnacH = new HBox(10);
 		CPnacH.getChildren().addAll(CPnac, CPnacT);
+		CPnacH.setAlignment(Pos.CENTER_RIGHT);
 		HBox CPrgH = new HBox(10);
 		CPrgH.getChildren().addAll(CPrg, CPrgT);
+		CPrgH.setAlignment(Pos.CENTER_RIGHT);
 		
 		Label CPmod = new Label("Modalidade:");
 		Label CPpais = new Label("País:");
@@ -72,8 +80,12 @@ public class Sistema extends Application {
 		
 		HBox CPmodH = new HBox(10);
 		CPmodH.getChildren().addAll(CPmod, CPmodT);
+		CPmodH.setAlignment(Pos.CENTER_RIGHT);
+		CPmodT.setDisable(true);
 		HBox CPpaisH = new HBox(10);
 		CPpaisH.getChildren().addAll(CPpais, CPpaisT);
+		CPpaisH.setAlignment(Pos.CENTER_RIGHT);
+		CPpaisT.setDisable(true);
 		
 		Label CPcel = new Label("Celular:");
 		Label CPpag = new Label("Pagamento:");
@@ -90,26 +102,38 @@ public class Sistema extends Application {
 		
 		HBox CPcelH = new HBox(10);
 		CPcelH.getChildren().addAll(CPcel, CPcelT);
+		CPcelH.setAlignment(Pos.CENTER_RIGHT);
+		CPcelT.setDisable(true);
 		HBox CPpagH = new HBox(10);
 		CPpagH.getChildren().addAll(CPpag, CPpagT);
+		CPpagH.setAlignment(Pos.CENTER_RIGHT);
+		CPpagT.setDisable(true);
 		HBox CPhabH = new HBox(10);
 		CPhabH.getChildren().addAll(CPhab, CPhabT);
+		CPhabH.setAlignment(Pos.CENTER_RIGHT);
+		CPhabT.setDisable(true);
 		HBox CPcarH = new HBox(10);
 		CPcarH.getChildren().addAll(CPcar, CPcarT);
+		CPcarH.setAlignment(Pos.CENTER_RIGHT);
+		CPcarT.setDisable(true);
 		HBox CPplacaH = new HBox(10);
 		CPplacaH.getChildren().addAll(CPplaca, CPplacaT);
+		CPplacaH.setAlignment(Pos.CENTER_RIGHT);
+		CPplacaT.setDisable(true);
 		HBox CPopH = new HBox(10);
 		CPopH.getChildren().addAll(CPop, CPopT);
+		CPopH.setAlignment(Pos.CENTER_RIGHT);
+		CPopT.setDisable(true);
 
 		
 		Button CPok = new Button("CADASTRAR");
 		
-		VBox layoutCP = new VBox(7);
+		VBox layoutCP = new VBox(10);
 		layoutCP.getChildren().addAll(
-				CPtitulo, CPtipoH, CPnomeH, CPcpfH, CPnacH, CPrgH,
+				CPtitulo, linha1, CPcpfH, CPnacH, CPrgH,
 				CPmodH, CPpaisH,
 				CPcelH, CPpagH, CPhabH, CPcarH, CPplacaH, CPopH, CPok);
-		layoutCP.setAlignment(Pos.CENTER);
+		layoutCP.setAlignment(Pos.TOP_CENTER);
 		
 		CPcombo.setOnAction(e -> {
 			if(CPcombo.getValue().equals("Turista")){
@@ -144,7 +168,8 @@ public class Sistema extends Application {
 			}
 		});
 		
-		//CADASTRO HOTEL
+		//CADASTRO HOTEL ------------------------------------
+		/*
 		Label CHrua= new Label("Rua:");
 		Label CHbairro = new Label("Bairro:");
 		Label CHcidade = new Label("Cidade:");
@@ -186,60 +211,173 @@ public class Sistema extends Application {
 		VBox layoutCH = new VBox(7);
 		layoutCH.getChildren().addAll(CHruaH, CHbairroH, CHcidadeH, CHestadoH, CHpaisH, CHnomeH, CHestrelasH, CHrestaurantesH,CHok,Consultor.retornaTabelaConsulta("select * from carro"));
 		layoutCH.setAlignment(Pos.CENTER);
+		*/
 		
-		// CADASTRO ESTADIO
+		// CONSULTA PESSOA -------------------------------------
+		Label SPtitulo = new Label("CONSULTAR PESSOA");
+		SPtitulo.setFont(new Font(20));
+		//TODO: TABLE
 		
-		// CONSULTA PESSOA
+		VBox layoutSP = new VBox(20);
+		layoutSP.getChildren().addAll(SPtitulo);
+		layoutSP.setAlignment(Pos.TOP_CENTER);
 		
-		// CONSULTA HOTEL
+		//OFERTA DISTANCIA HOTEL-ESTADIO
+				Label ofertaTitulo = new Label("MELHOR OFERTA PARA SEU BOLSO");
+				ofertaTitulo.setFont(new Font(20));
+				
+				Label escolhaEstadio = new Label("Escolha o estádio em que você está:");
+				String sqlEstadios = "select nome from estadio";
+				ObservableList<String> listEstadios = Consultor.retornaListConsulta(sqlEstadios);
+				ComboBox<String> estadiosCadastrados = new ComboBox<String>(listEstadios);
+				Label lbBandeirada = new Label("Preço bandeirada:");
+				TextField bandeirada = new TextField("0");
+				HBox hBoxBuscaEstadio = new HBox(4);
+				hBoxBuscaEstadio.getChildren().addAll(escolhaEstadio,estadiosCadastrados,lbBandeirada,bandeirada);
+				
+				TableView<String> tableOfertas = new TableView<String>();
+				VBox vBoxDistancia = new VBox(10);
+				
+				vBoxDistancia.getChildren().addAll(ofertaTitulo,hBoxBuscaEstadio,tableOfertas);
+				vBoxDistancia.setAlignment(Pos.CENTER);
+				
+				estadiosCadastrados.setOnAction((event)->{
+					String sqlOferta = 
+							"select h.nome,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h"+
+							"join quarto q on q.idhotel = h.idhotel"+
+							"join distancia d on d.idhotel = h.idhotel"+
+							"join estadio e on e.idestadio = d.idestadio"+
+							"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and"+
+							"e.nome = "+estadiosCadastrados.getValue();			
+					try {
+						TableView ofertas = Consultor.retornaTabelaConsulta(sqlOferta);
+						tableOfertas.setItems(ofertas.getItems());
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				});
+		
+		
+		// CONSULTA HOTEL --------------------------------------
+		
 		Label SHtitulo = new Label("CONSULTAR HOTÉIS");
+		SHtitulo.setFont(new Font(20));
 		Label SHperiodo = new Label("Período:");
 		DatePicker SHdata1 = new DatePicker();
 		DatePicker SHdata2 = new DatePicker();
-		HBox SHdata = new HBox(7);
+		HBox SHdata = new HBox(10);
 		SHdata.getChildren().addAll(SHperiodo, SHdata1, SHdata2);
+		SHdata.setAlignment(Pos.CENTER);
 		
 		/*TableView<> SHtab = new TableView<>();
 		TableColumn SHtab1 = new TableColumn("Hotel");
 		TableColumn SHtab2 = new TableColumn("Quartos Disponíveis");
 		SHtab.getColumns().addAll(SHtab1, SHtab2);*/
+		//TODO: TABLE
 		
-		Button SHcons = new Button();
+		Button SHcons = new Button("CONSULTAR");
 		
-		// CONSULTA QUARTOS
+		VBox layoutSH = new VBox(20);
+		layoutSH.getChildren().addAll(SHtitulo, SHdata, SHcons);
+		layoutSH.setAlignment(Pos.TOP_CENTER);
+		
+		// CONSULTA QUARTOS -------------------------------
 		Label SQtitulo = new Label("CONSULTAR QUARTOS");
+		SQtitulo.setFont(new Font(20));
 		
+		//TODO: TABLE
 		
-		// CONSULTA ESTADIO
+		Button SQres = new Button("RESERVAR");
 		
-		//OFERTA DISTANCIA HOTEL-ESTADIO
-		Label ofertaTitulo = new Label("MELHOR OFERTA PARA SEU BOLSO");
-		Label escolhaEstadio = new Label("Escolha o estádio em que você está:");
-		TableView<String> tableOfertas = new TableView<String>();
-		TextField bandeirada = new TextField("0");
-		String sqlEstadios = "select nome from estadio";
-		ObservableList<String> listEstadios = Consultor.retornaListConsulta(sqlEstadios);
-		ComboBox<String> estadiosCadastrados = new ComboBox<String>(listEstadios);
-		estadiosCadastrados.setOnAction((event)->{
-			String sqlOferta = 
-					"select h.nome,h.estrelas,q.tipo,q.precoDiaria,d.distancia,("+bandeirada.getText()+"*d.distancia+q.precoDiaria) as PrecoTotal from hotel h"+
-					"join quarto q on q.idhotel = h.idhotel"+
-					"join distancia d on d.idhotel = h.idhotel"+
-					"join estadio e on e.idestadio = d.idestadio"+
-					"where not exists (select r.numReserva from reserva r where r.idHotel = h.idHotel and r.numeroQuarto=q.numero and dataEntrada = getDate()) and"+
-					"e.nome = "+estadiosCadastrados.getValue();			
-			try {
-				TableView ofertas = Consultor.retornaTabelaConsulta(sqlOferta);
-				tableOfertas.setItems(ofertas.getItems());
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		VBox layoutSQ = new VBox(20);
+		layoutSQ.getChildren().addAll(SQtitulo, SQres);
+		layoutSQ.setAlignment(Pos.TOP_CENTER);
+		
+		// CADASTRA RESERVA ------------------------------
+		Label CRtitulo = new Label("CADASTRAR RESERVA");
+		CRtitulo.setFont(new Font(20));
+		
+		Label CRcpf = new Label("CPF:");
+		TextField CRcpfT = new TextField();
+		HBox CRcpfH = new HBox(10);
+		CRcpfH.getChildren().addAll(CRcpf, CRcpfT);
+		CRcpfH.setAlignment(Pos.CENTER);
+		
+		Button CRok = new Button("CONFIRMAR");
+		
+		VBox layoutCR = new VBox(20);
+		layoutCR.getChildren().addAll(CRtitulo, CRcpfH, CRok);
+		layoutCR.setAlignment(Pos.TOP_CENTER);
+		
+		// LAYOUT PRINCIPAL -------------------------------
+		MenuBar navbar = new MenuBar();
+		Menu navP = new Menu("Pessoas");
+		MenuItem navPcad = new MenuItem("Cadastrar");
+		MenuItem navPcon = new MenuItem("Consultar");
+		navP.getItems().addAll(navPcad, navPcon);
+		Menu navH = new Menu("Hotéis");
+		MenuItem navHcon = new MenuItem("Consultar");
+		navH.getItems().addAll(navHcon);
+		Menu navC = new Menu("Taxi");
+		MenuItem navCcon = new MenuItem("Consultar");
+		navC.getItems().addAll(navCcon);
+		Menu navO = new Menu("Oferta");
+		MenuItem navOcon = new MenuItem("Consultar");
+		navO.getItems().addAll(navOcon);
+		navbar.getMenus().addAll(navP, navH, navC, navO);
+		
+		VBox layoutInicio = new VBox(30);
+		layoutInicio.getChildren().addAll(projeto, nomes);
+		layoutInicio.setAlignment(Pos.TOP_CENTER);
+		
+		VBox principal = new VBox(20);
+		principal.getChildren().addAll(navbar, layoutInicio);
+		Scene scene = new Scene(principal, 600, 600);
+		window.setScene(scene);
+		window.show();
+		
+		// BOTOES -----------------------------------
+		navPcad.setOnAction(e -> {
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar, layoutCP);
 		});
-
 		
-		// LAYOUT PRINCIPAL
+		navPcon.setOnAction(e -> {
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar, layoutSP);
+		});
 		
+		navHcon.setOnAction(e -> {
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar, layoutSH);
+		});
+		
+		navCcon.setOnAction(e -> {
+			principal.getChildren().clear();
+			//principal.getChildren().addAll(navbar, XXX);
+		});
+		
+		navOcon.setOnAction(e -> {
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar,vBoxDistancia);
+		});
+		
+		SHcons.setOnAction(e -> {
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar, layoutSQ);
+			//TODO: selecionar hotel
+		});
+		
+		SQres.setOnAction(e ->{
+			principal.getChildren().clear();
+			principal.getChildren().addAll(navbar,layoutCR);
+			//TODO: selecionar quarto
+		});
+		
+		CRok.setOnAction(e ->{
+			//TODO: reservar
+		});
 	}
 
 }
