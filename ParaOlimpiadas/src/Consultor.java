@@ -13,12 +13,19 @@ import javafx.util.Callback;
 
 public class Consultor {
 
+	private static String ip = "grad.icmc.usp.br";
+	private static String porta = "15215";
+	private static String type = "orcl";
+	private static String login = "g8937159";
+	private static String senha = "g8937159";
+	
+	//ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 	public static TableView retornaTabelaConsulta(String query) throws SQLException {
 		
 		TableView tvTeste = new TableView();
 		ObservableList<ObservableList> data = FXCollections.observableArrayList();
-		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco(ip,porta,type,login,senha);
+		
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         
@@ -52,8 +59,7 @@ public class Consultor {
 public static void alteraTabela(String query,TableView table) throws SQLException {
 		
 		ObservableList<ObservableList> data = FXCollections.observableArrayList();
-		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco(ip,porta,type,login,senha);
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         table.getColumns().clear();
@@ -86,8 +92,7 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 	
 	public static ObservableList<String> retornaListConsulta(String query) throws SQLException {
 		
-		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco(ip,porta,type,login,senha);
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         ObservableList<String> row = FXCollections.observableArrayList();
@@ -103,8 +108,7 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 	}
 	
 	public static void executaSql(String query){
-		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco(ip,porta,type,login,senha);
 		cb.abrirConexao();
 		try {
 			ResultSet rs = cb.executaSql(query);
@@ -116,7 +120,7 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 	}
 	
 	public static void executaUpdate(String query){
-		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco(ip,porta,type,login,senha);
 		cb.abrirConexao();
 		try {
 			int rs = cb.executaUpdate(query);

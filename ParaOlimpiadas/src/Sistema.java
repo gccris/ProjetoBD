@@ -280,7 +280,8 @@ public class Sistema extends Application {
 		String sqlPessoaHotel = "select p.nome,p.nacionalidade,h.nomeHotel from pessoa p "+
 				"join reserva r on r.cpfPessoa = p.CPF_Passaporte "+
 				"join hotel h on h.idHotel = r.idHotel "+
-				"where r.dataEntrada>= SYSDATE and r.dataSaida<= SYSDATE";
+				"where SYSDATE>=r.dataEntrada or SYSDATE <= r.dataSaida "+
+				"order by h.nomeHotel";
 		TableView pessoaHotel = new TableView();
 		Consultor.alteraTabela(sqlPessoaHotel, pessoaHotel);
 
