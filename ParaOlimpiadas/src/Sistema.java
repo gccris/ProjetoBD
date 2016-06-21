@@ -20,13 +20,19 @@ public class Sistema extends Application {
 		window = primaryStage;
 		
 		// INICIO --------------------------------------
-		Label titulo = new Label("SISTEMA PARAOLIMPÍADAS");
-		titulo.setFont(new Font(20));
+		Label cab1 = new Label("Universidade de São Paulo");
+		Label cab2 = new Label("Instituto de Ciências Matemáticas e de Computação");
+		Label titulo = new Label("PROJETO PARAOLIMPÍADAS");
+		titulo.setFont(new Font(30));
 		Label disciplina = new Label("Base de Dados");
 		Label professora = new Label("Profª. Elaine Parros M. de Souza");
 		Label nome1 = new Label("Gabriel Campos Cristiano (8937138)");
 		Label nome2 = new Label("Gustavo Dias Cavalheri (8937159)");
 		Label nome3 = new Label("Leonardo Ventura (8937211)");
+		
+		VBox cabecalho = new VBox(7);
+		cabecalho.getChildren().addAll(cab1, cab2);
+		cabecalho.setAlignment(Pos.TOP_CENTER);
 
 		VBox projeto = new VBox(7);
 		projeto.getChildren().addAll(titulo, disciplina, professora);
@@ -35,6 +41,10 @@ public class Sistema extends Application {
 		VBox nomes = new VBox(7);
 		nomes.getChildren().addAll(nome1, nome2, nome3);
 		nomes.setAlignment(Pos.BOTTOM_CENTER);
+		
+		VBox layoutInicio = new VBox(120);
+		layoutInicio.getChildren().addAll(cabecalho, projeto, nomes);
+		layoutInicio.setAlignment(Pos.TOP_CENTER);
 		
 		
 		// CADASTRO PESSOA -------------------------------
@@ -60,9 +70,6 @@ public class Sistema extends Application {
 		HBox CPnomeH = new HBox(10);
 		CPnomeH.getChildren().addAll(CPnome, CPnomeT);
 		CPnomeH.setAlignment(Pos.CENTER_RIGHT);
-		HBox linha1 = new HBox (50);
-		linha1.getChildren().addAll(CPtipoH, CPnomeH);
-		linha1.setAlignment(Pos.CENTER_RIGHT);
 		HBox CPcpfH = new HBox(10);
 		CPcpfH.getChildren().addAll(CPcpf, CPcpfT);
 		CPcpfH.setAlignment(Pos.CENTER_RIGHT);
@@ -92,7 +99,7 @@ public class Sistema extends Application {
 		Label CPhab = new Label("CNH:");
 		Label CPcar = new Label("Carro:");
 		Label CPplaca = new Label("Placa:");
-		Label CPop = new Label("Opcionais:");
+		Label CPop = new Label("Ar Condicionado:");
 		TextField CPcelT = new TextField();
 		TextField CPpagT = new TextField();
 		TextField CPhabT = new TextField();
@@ -128,11 +135,28 @@ public class Sistema extends Application {
 		
 		Button CPok = new Button("CADASTRAR");
 		
-		VBox layoutCP = new VBox(10);
-		layoutCP.getChildren().addAll(
-				CPtitulo, linha1, CPcpfH, CPnacH, CPrgH,
+		Label idiomas = new Label("Idiomas falados:");
+		TextField idioma1 = new TextField();
+		TextField idioma2 = new TextField();
+		VBox CPidiomas = new VBox(10);
+		CPidiomas.getChildren().addAll(idiomas, idioma1, idioma2);
+		
+		VBox layoutCP1 = new VBox(10);
+		layoutCP1.getChildren().addAll(
+				CPnomeH, CPcpfH, CPnacH, CPrgH,
 				CPmodH, CPpaisH,
-				CPcelH, CPpagH, CPhabH, CPcarH, CPplacaH, CPopH, CPok);
+				CPcelH, CPpagH, CPhabH, CPcarH, CPplacaH, CPopH);
+		layoutCP1.setAlignment(Pos.TOP_CENTER);
+		
+		VBox layoutCP2 = new VBox(100);
+		layoutCP2.getChildren().addAll(CPtipoH, CPidiomas);
+		
+		HBox layoutCPH = new HBox(40);
+		layoutCPH.getChildren().addAll(layoutCP1, layoutCP2);
+		layoutCPH.setAlignment(Pos.TOP_CENTER);
+		
+		VBox layoutCP = new VBox(10);
+		layoutCP.getChildren().addAll(CPtitulo, layoutCPH, CPok);
 		layoutCP.setAlignment(Pos.TOP_CENTER);
 		
 		CPcombo.setOnAction(e -> {
@@ -166,6 +190,42 @@ public class Sistema extends Application {
 				CPplacaT.setDisable(false);
 				CPopT.setDisable(false);
 			}
+		});
+		
+			CPok.setOnAction((event) -> {
+				String sqlCadastra = new String();
+				if(CPcombo.getValue().equals("Turista")){
+					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
+										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+										"', 'TURISTA', '"+CPnacT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+				}
+				else if(CPcombo.getValue().equals("Comissão")){
+					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade, idModalidade, pais) "+
+										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+										"', 'COMISSAO', '"+CPnacT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO Comissao VALUES ('"+CPcpfT.getText()+"', "+CPmodT.getText()+", '"+CPpaisT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+				}
+				else if(CPcombo.getValue().equals("Taxista")){
+					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
+										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+										"', 'TAXISTA', '"+CPnacT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO Taxista VALUES ('"+CPcpfT.getText()+"', '"+CPcelT.getText()+"', '"
+										+CPhabT.getText()+"', '"+CPplacaT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO Carro VALUES ('"+CPplacaT.getText()+"', '"+CPcarT.getText()+"', '"+CPopT.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
+					Consultor.executaUpdate(sqlCadastra);
+					
+				}
 		});
 		
 		//CADASTRO HOTEL ------------------------------------
@@ -280,16 +340,36 @@ public class Sistema extends Application {
 		SHdata.getChildren().addAll(SHperiodo, SHdata1, SHdata2);
 		SHdata.setAlignment(Pos.CENTER);
 		
-		/*TableView<> SHtab = new TableView<>();
-		TableColumn SHtab1 = new TableColumn("Hotel");
-		TableColumn SHtab2 = new TableColumn("Quartos Disponíveis");
-		SHtab.getColumns().addAll(SHtab1, SHtab2);*/
-		//TODO: TABLE
+		TableView tabelaHoteis = new TableView();
+		SHdata1.setOnAction(e -> {
+			String sqlBuscaHoteis = "SELECT H.nomeHotel AS NOME, COUNT(H.nomeHotel) AS DISPONIVEIS FROM Hotel H "+
+					"JOIN Quarto Q ON Q.idHotel = H.idHotel "+
+					"WHERE (Q.numero, Q.idHotel) NOT IN ("+
+					"SELECT Q.numero, Q.idHotel FROM Quarto Q "+
+					"JOIN Reserva R ON (Q.numero = R.numeroQuarto AND Q.idHotel = R.idHotel) "+
+					"WHERE ('"+SHdata1.getValue()+"' NOT BETWEEN R.dataEntrada AND R.dataSaida) "+
+					"AND ('"+SHdata1.getValue()+"' NOT BETWEEN R.dataEntrada AND R.dataSaida)) "+
+					"GROUP BY H.nomeHotel";
+			try{
+				Consultor.alteraTabela(sqlBuscaHoteis, tabelaHoteis);
+			} catch (Exception e7){
+				e7.printStackTrace();
+			}
+		});
 		
 		Button SHcons = new Button("CONSULTAR");
 		
+		/*tabelaHoteis.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		tabelaHoteis.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+			if(tabelaHoteis.getSelectionModel().getSelectedItem(). != null){
+				SHcons.setOnAction(e ->{
+					//TODO: botao
+				});
+			}
+		});
+		*/
 		VBox layoutSH = new VBox(20);
-		layoutSH.getChildren().addAll(SHtitulo, SHdata, SHcons);
+		layoutSH.getChildren().addAll(SHtitulo, SHdata, tabelaHoteis, SHcons);
 		layoutSH.setAlignment(Pos.TOP_CENTER);
 		
 		// CONSULTA QUARTOS -------------------------------
@@ -337,10 +417,6 @@ public class Sistema extends Application {
 		navO.getItems().addAll(navOcon);
 		navbar.getMenus().addAll(navP, navH, navC, navO);
 		
-		VBox layoutInicio = new VBox(30);
-		layoutInicio.getChildren().addAll(projeto, nomes);
-		layoutInicio.setAlignment(Pos.TOP_CENTER);
-		
 		VBox principal = new VBox(20);
 		principal.getChildren().addAll(navbar, layoutInicio);
 		Scene scene = new Scene(principal, 600, 600);
@@ -348,46 +424,45 @@ public class Sistema extends Application {
 		window.show();
 		
 		// BOTOES -----------------------------------
-		navPcad.setOnAction(e -> {
+		navPcad.setOnAction((event) -> {
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar, layoutCP);
 		});
 		
-		navPcon.setOnAction(e -> {
+		navPcon.setOnAction((event) -> {
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar, layoutPH);
 		});
 		
-		navHcon.setOnAction(e -> {
+		navHcon.setOnAction((event) -> {
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar, layoutSH);
 		});
 		
-		navCcon.setOnAction(e -> {
+		navCcon.setOnAction((event) -> {
 			principal.getChildren().clear();
 			//principal.getChildren().addAll(navbar, XXX);
 		});
 		
-		navOcon.setOnAction(e -> {
+		navOcon.setOnAction((event) -> {
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar,vBoxDistancia);
 		});
 		
-		SHcons.setOnAction(e -> {
+		SHcons.setOnAction((event) -> {
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar, layoutSQ);
 			//TODO: selecionar hotel
 		});
 		
-		SQres.setOnAction(e ->{
+		SQres.setOnAction((event) ->{
 			principal.getChildren().clear();
 			principal.getChildren().addAll(navbar,layoutCR);
 			//TODO: selecionar quarto
 		});
 		
-		CRok.setOnAction(e ->{
+		CRok.setOnAction((event) -> {
 			//TODO: reservar
 		});
 	}
-
 }

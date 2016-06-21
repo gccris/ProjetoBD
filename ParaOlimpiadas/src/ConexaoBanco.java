@@ -36,6 +36,9 @@ public class ConexaoBanco {
 		public ResultSet executaSql(String sql) throws SQLException{
 			return this.stmt.executeQuery(sql);
 		}
+		public int executaUpdate(String sql) throws SQLException{
+			return this.stmt.executeUpdate(sql);
+		}
 		
 		public void fechaConexao(){
 			try {

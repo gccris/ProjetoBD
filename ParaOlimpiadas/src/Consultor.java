@@ -18,7 +18,7 @@ public class Consultor {
 		TableView tvTeste = new TableView();
 		ObservableList<ObservableList> data = FXCollections.observableArrayList();
 		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("localhost","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         
@@ -53,7 +53,7 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 		
 		ObservableList<ObservableList> data = FXCollections.observableArrayList();
 		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("localhost","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         table.getColumns().clear();
@@ -87,7 +87,7 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 	public static ObservableList<String> retornaListConsulta(String query) throws SQLException {
 		
 		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("localhost","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 		cb.abrirConexao();
 		ResultSet rs = cb.executaSql(query);
         ObservableList<String> row = FXCollections.observableArrayList();
@@ -104,10 +104,22 @@ public static void alteraTabela(String query,TableView table) throws SQLExceptio
 	
 	public static void executaSql(String query){
 		//ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		ConexaoBanco cb = new ConexaoBanco("localhost","1521","xe","system","123456");
+		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 		cb.abrirConexao();
 		try {
 			ResultSet rs = cb.executaSql(query);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cb.fechaConexao();
+	}
+	
+	public static void executaUpdate(String query){
+		ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+		cb.abrirConexao();
+		try {
+			int rs = cb.executaUpdate(query);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
