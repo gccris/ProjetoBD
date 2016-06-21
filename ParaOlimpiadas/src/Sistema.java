@@ -1,4 +1,5 @@
 import javafx.application.*;
+import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -142,7 +143,48 @@ public class Sistema extends Application {
 			}
 		});
 		
-		// CADASTRO HOTEL
+		//CADASTRO HOTEL
+		Label CHrua= new Label("Rua:");
+		Label CHbairro = new Label("Bairro:");
+		Label CHcidade = new Label("Cidade:");
+		Label CHestado = new Label("Estado:");
+		Label CHpais = new Label("País:");
+		Label CHnome = new Label("Nome do Hotel:");
+		Label CHestrelas= new Label("Estrelas:");
+		Label CHrestaurantes= new Label("Restaurantes:");
+		TextField CHruaT = new TextField();
+		TextField CHbairroT = new TextField();
+		TextField CHcidadeT = new TextField();
+		TextField CHestadoT = new TextField();
+		TextField CHpaisT = new TextField();
+		TextField CHnomeT = new TextField();
+		ChoiceBox CHestrelasR = new ChoiceBox(FXCollections.observableArrayList(
+			    "1", "2", "3", "4", "5"));
+		ChoiceBox CHrestaurantesR = new ChoiceBox(FXCollections.observableArrayList(
+			    "1", "2", "3", "4", "5"));
+		
+		HBox CHruaH = new HBox(10);
+		CHruaH.getChildren().addAll(CHrua, CHruaT);
+		HBox CHbairroH = new HBox(10);
+		CHbairroH.getChildren().addAll(CHbairro, CHbairroT);
+		HBox CHcidadeH = new HBox(10);
+		CHcidadeH.getChildren().addAll(CHcidade, CHcidadeT);
+		HBox CHestadoH = new HBox(10);
+		CHestadoH.getChildren().addAll(CHestado, CHestadoT);
+		HBox CHpaisH = new HBox(10);
+		CHpaisH.getChildren().addAll(CHpais, CHpaisT);
+		HBox CHnomeH = new HBox(10);
+		CHnomeH.getChildren().addAll(CHnome, CHnomeT);
+		HBox CHestrelasH = new HBox(10);
+		CHestrelasH.getChildren().addAll(CHestrelas, CHestrelasR);
+		HBox CHrestaurantesH = new HBox(10);
+		CHrestaurantesH.getChildren().addAll(CHrestaurantes, CHrestaurantesR);
+		
+		Button CHok = new Button("CADASTRAR");
+		
+		VBox layoutCH = new VBox(7);
+		layoutCH.getChildren().addAll(CHruaH, CHbairroH, CHcidadeH, CHestadoH, CHpaisH, CHnomeH, CHestrelasH, CHrestaurantesH,CHok,Consultor.retornaTabelaConsulta("select * from carro"));
+		layoutCH.setAlignment(Pos.CENTER);
 		
 		// CADASTRO ESTADIO
 		
@@ -156,10 +198,10 @@ public class Sistema extends Application {
 		HBox SHdata = new HBox(7);
 		SHdata.getChildren().addAll(SHperiodo, SHdata1, SHdata2);
 		
-		TableView<> SHtab = new TableView<>();
+		/*TableView<> SHtab = new TableView<>();
 		TableColumn SHtab1 = new TableColumn("Hotel");
 		TableColumn SHtab2 = new TableColumn("Quartos Disponíveis");
-		SHtab.getColumns().addAll(SHtab1, SHtab2);
+		SHtab.getColumns().addAll(SHtab1, SHtab2);*/
 		
 		Button SHcons = new Button();
 		
