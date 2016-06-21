@@ -43,22 +43,7 @@ public class Consultor {
             data.add(row);
         }
 		tvTeste.setItems(data);
-		return tvTeste;
-	}
-	
-	public static ObservableList<String> retornaListConsulta(String query) throws SQLException {
 		
-		ConexaoBanco cb = new ConexaoBanco("grad.icmc.usp.br","15215","orcl","g8937159","g8937159");
-		cb.abrirConexao();
-		ResultSet rs = cb.executaSql(query);
-        ObservableList<String> row = FXCollections.observableArrayList();
-		while(rs.next()){
-            //Iterate Row
-            for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
-                //Iterate Column
-                row.add(rs.getString(i));
-            }
-        }
-		return row;
+		return tvTeste;
 	}
 }
