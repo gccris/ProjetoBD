@@ -1,5 +1,6 @@
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Random;
 import java.sql.ResultSet;
@@ -228,23 +229,33 @@ public class Sistema extends Application {
 
 				if(!alterar){
 					String sqlCadastra = new String();
-					if(CPcombo.getValue().equals("Turista")){
+					if(CPcombo.getValue().equals("Turista") && !CPcpfT.getText().isEmpty() && !CPnacT.getText().isEmpty()){
 						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
 											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
 											"', 'TURISTA', '"+CPnacT.getText()+"')";
 						Consultor.executaUpdate(sqlCadastra);
+						Alert a = new Alert(AlertType.INFORMATION);
+						a.setTitle("Cadastro concluido");
+						a.setHeaderText(null);
+						a.setContentText("Pessoa cadastrada com sucesso");
+						a.showAndWait();
 						
 					}
-					else if(CPcombo.getValue().equals("Comissão")){
+					else if(CPcombo.getValue().equals("Comissão") && !CPcpfT.getText().isEmpty() && !CPnacT.getText().isEmpty() && !CPmodT.getText().isEmpty()){
 						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade, idModalidade, pais) "+
 											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
 											"', 'COMISSAO', '"+CPnacT.getText()+"')";
 						Consultor.executaUpdate(sqlCadastra);
 						sqlCadastra = "INSERT INTO Comissao VALUES ('"+CPcpfT.getText()+"', "+CPmodT.getText()+", '"+CPpaisT.getText()+"')";
 						Consultor.executaUpdate(sqlCadastra);
+						Alert a = new Alert(AlertType.INFORMATION);
+						a.setTitle("Cadastro concluido");
+						a.setHeaderText(null);
+						a.setContentText("Pessoa cadastrada com sucesso");
+						a.showAndWait();
 					
 					}
-					else if(CPcombo.getValue().equals("Taxista")){
+					else if(CPcombo.getValue().equals("Taxista") && !CPcpfT.getText().isEmpty() && !CPnacT.getText().isEmpty() && !CPcelT.getText().isEmpty() && !CPhabT.getText().isEmpty() && !CPpagT.getText().isEmpty() && !CPplacaT.getText().isEmpty()){
 						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
 											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
 											"', 'TAXISTA', '"+CPnacT.getText()+"')";
@@ -254,7 +265,19 @@ public class Sistema extends Application {
 						Consultor.executaUpdate(sqlCadastra);
 						sqlCadastra = "INSERT INTO Carro VALUES ('"+CPplacaT.getText()+"', '"+CPcarT.getText()+"', '"+CPopT.getText()+"')";
 						Consultor.executaUpdate(sqlCadastra);
+						Alert a = new Alert(AlertType.INFORMATION);
+						a.setTitle("Cadastro concluido");
+						a.setHeaderText(null);
+						a.setContentText("Pessoa cadastrada com sucesso");
+						a.showAndWait();
 						
+					}
+					else {
+						Alert a = new Alert(AlertType.INFORMATION);
+						a.setTitle("ERRO");
+						a.setHeaderText(null);
+						a.setContentText("Faltam informações necessárias.");
+						a.showAndWait();
 					}
 					if(!idioma1.getText().isEmpty()){
 						sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
@@ -265,11 +288,6 @@ public class Sistema extends Application {
 						sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma2.getText()+"')";
 						Consultor.executaUpdate(sqlCadastra);
 					}
-					Alert a = new Alert(AlertType.INFORMATION);
-					a.setTitle("Cadastro concluido");
-					a.setHeaderText(null);
-					a.setContentText("Pessoa cadastrada com sucesso");
-					a.showAndWait();
 					CPnomeT.clear();
 					CPcpfT.clear();
 					CPrgT.clear();
@@ -399,34 +417,54 @@ public class Sistema extends Application {
 		SHdata.getChildren().addAll(SHperiodo, SHdata1, SHdata2);
 		SHdata.setAlignment(Pos.CENTER);
 		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		TableView tabelaHoteis = new TableView();
 		SHdata1.setOnAction(e -> {
-			String sqlBuscaHoteis = "SELECT H.nomeHotel AS NOME, COUNT(H.nomeHotel) AS DISPONIVEIS FROM Hotel H "+
-					"JOIN Quarto Q ON Q.idHotel = H.idHotel "+
-					"WHERE (Q.numero, Q.idHotel) NOT IN ("+
-					"SELECT Q.numero, Q.idHotel FROM Quarto Q "+
-					"JOIN Reserva R ON (Q.numero = R.numeroQuarto AND Q.idHotel = R.idHotel) "+
-					"WHERE ('"+SHdata1.getValue()+"' NOT BETWEEN R.dataEntrada AND R.dataSaida) "+
-					"AND ('"+SHdata1.getValue()+"' NOT BETWEEN R.dataEntrada AND R.dataSaida)) "+
-					"GROUP BY H.nomeHotel";
-			try{
-				Consultor.alteraTabela(sqlBuscaHoteis, tabelaHoteis);
-			} catch (Exception e7){
-				e7.printStackTrace();
+			if(SHdata2.getValue() != null && SHdata1.getValue().isBefore(SHdata2.getValue())){
+				String sqlBuscaHoteis = "SELECT H.nomeHotel AS NOME, H.idHotel AS ID, H.estrelas AS ESTRELAS, COUNT(H.nomeHotel) AS DISPONIVEIS FROM Hotel H "+
+						"JOIN Quarto Q ON Q.idHotel = H.idHotel "+
+						"WHERE (Q.numero, Q.idHotel) NOT IN ("+
+						"SELECT Q.numero, Q.idHotel FROM Quarto Q "+
+						"JOIN Reserva R ON (Q.numero = R.numeroQuarto AND Q.idHotel = R.idHotel) "+
+						"WHERE ('"+formatter.format(SHdata1.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida) "+
+						"AND ('"+formatter.format(SHdata2.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida)) "+
+						"GROUP BY H.nomeHotel, H.idHotel, H.estrelas ORDER BY H.nomeHotel";
+				try{
+					Consultor.alteraTabela(sqlBuscaHoteis, tabelaHoteis);
+				} catch (Exception e7){
+					e7.printStackTrace();
+				}
+			}
+		});
+		
+		SHdata2.setOnAction(e -> {
+			if(SHdata1.getValue() != null && SHdata1.getValue().isBefore(SHdata2.getValue())){
+				String sqlBuscaHoteis = "SELECT H.nomeHotel AS NOME, H.idHotel AS ID, H.estrelas AS ESTRELAS, COUNT(H.nomeHotel) AS DISPONIVEIS FROM Hotel H "+
+						"JOIN Quarto Q ON Q.idHotel = H.idHotel "+
+						"WHERE (Q.numero, Q.idHotel) NOT IN ("+
+						"SELECT Q.numero, Q.idHotel FROM Quarto Q "+
+						"JOIN Reserva R ON (Q.numero = R.numeroQuarto AND Q.idHotel = R.idHotel) "+
+						"WHERE ('"+formatter.format(SHdata1.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida) "+
+						"AND ('"+formatter.format(SHdata2.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida)) "+
+						"GROUP BY H.nomeHotel, H.idHotel, H.estrelas ORDER BY H.nomeHotel";
+				try{
+					Consultor.alteraTabela(sqlBuscaHoteis, tabelaHoteis);
+				} catch (Exception e7){
+					e7.printStackTrace();
+				}
 			}
 		});
 		
 		Button SHcons = new Button("CONSULTAR");
 		
-		/*tabelaHoteis.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		Label nomeDoHotel = new Label();;
+		tabelaHoteis.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		tabelaHoteis.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
-			if(tabelaHoteis.getSelectionModel().getSelectedItem(). != null){
-				SHcons.setOnAction(e ->{
-					//TODO: botao
-				});
+			if(tabelaHoteis.getSelectionModel().getSelectedItem() != null){
+				nomeDoHotel.setText(tabelaHoteis.getSelectionModel().getSelectedItem().toString());
 			}
 		});
-		*/
+		
 		VBox layoutSH = new VBox(20);
 		layoutSH.getChildren().addAll(SHtitulo, SHdata, tabelaHoteis, SHcons);
 		layoutSH.setAlignment(Pos.TOP_CENTER);
@@ -434,6 +472,13 @@ public class Sistema extends Application {
 		// CONSULTA QUARTOS -------------------------------
 		Label SQtitulo = new Label("CONSULTAR QUARTOS");
 		SQtitulo.setFont(new Font(20));
+		
+		
+		Button SQres = new Button("RESERVAR");
+		
+		VBox layoutSQ = new VBox(20);
+		layoutSQ.getChildren().addAll(SQtitulo, SQres);
+		layoutSQ.setAlignment(Pos.TOP_CENTER);
 		
 		// CONSULTA TAXIS
 		Label lblDescricao = new Label("Insira seu cpf para verificacao de taxistas disponíveis do seu idioma");
@@ -606,26 +651,19 @@ public class Sistema extends Application {
 		    	}
 		    }
 		});
-		// ------------ FIm do cadastro de corridas ----------- //
-		
-		Button SQres = new Button("RESERVAR");
-		
-		VBox layoutSQ = new VBox(20);
-		layoutSQ.getChildren().addAll(SQtitulo, SQres);
-		layoutSQ.setAlignment(Pos.TOP_CENTER);
 		
 		// CADASTRA RESERVA ------------------------------
 		Label CRtitulo = new Label("CADASTRAR RESERVA");
 		CRtitulo.setFont(new Font(20));
-				
+		
 		Label CRcpf = new Label("CPF:");
 		TextField CRcpfT = new TextField();
 		HBox CRcpfH = new HBox(10);
 		CRcpfH.getChildren().addAll(CRcpf, CRcpfT);
 		CRcpfH.setAlignment(Pos.CENTER);
-				
+		
 		Button CRok = new Button("CONFIRMAR");
-				
+		
 		VBox layoutCR = new VBox(20);
 		layoutCR.getChildren().addAll(CRtitulo, CRcpfH, CRok);
 		layoutCR.setAlignment(Pos.TOP_CENTER);
@@ -691,8 +729,82 @@ public class Sistema extends Application {
 			//TODO: selecionar quarto
 		});
 		
-		CRok.setOnAction((event) -> {
-			//TODO: reservar
-		});
+		//lista quartos
+				TableView tabelaQuartos = new TableView();
+				SHcons.setOnAction(e -> {
+					String sqlBuscaQuartos = "SELECT H.nomeHotel AS HOTEL, Q.numero AS QUARTO, "+
+							"Q.tipo AS TIPO, Q.precoDiaria AS VALOR FROM Quarto Q "+
+							"JOIN Hotel H ON Q.idHotel = H.idHotel "+
+							"WHERE (H.nomeHotel = '"+nomeDoHotel.getText().split(",")[0].substring(1)+"') AND (Q.numero, Q.idHotel) NOT IN ("+
+							"SELECT Q.numero, Q.idHotel FROM Quarto Q "+
+							"JOIN Reserva R ON (Q.numero = R.numeroQuarto AND Q.idHotel = R.idHotel) "+
+							"WHERE ('"+formatter.format(SHdata1.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida) "+
+							"AND ('"+formatter.format(SHdata2.getValue())+"' NOT BETWEEN R.dataEntrada AND R.dataSaida))";
+					try{
+						Consultor.alteraTabela(sqlBuscaQuartos, tabelaQuartos);
+					} catch (Exception e4){
+						e4.printStackTrace();
+					}
+					principal.getChildren().clear();
+					principal.getChildren().addAll(navbar, layoutSQ, tabelaQuartos);
+				});
+				
+				//pega linha quarto
+				Label numeroDoQuarto = new Label();
+				tabelaQuartos.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+				tabelaQuartos.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+					if(tabelaQuartos.getSelectionModel().getSelectedItem() != null){
+						numeroDoQuarto.setText(tabelaQuartos.getSelectionModel().getSelectedItem().toString());
+					}
+				});
+				
+				CRok.setOnAction((event) -> {
+					ObservableList nRes = null;
+					//confere cpf
+					if(!CRcpfT.getText().isEmpty()){
+						String sqlBuscaCPF = "SELECT CPF_Passaporte FROM Pessoa "
+								+"WHERE CPF_Passaporte = "+CRcpfT.getText();
+						try{
+							nRes = Consultor.retornaListConsulta(sqlBuscaCPF);
+						} catch (Exception e4){
+							e4.printStackTrace();
+						}
+						if(nRes.isEmpty()){
+							Alert a = new Alert(AlertType.INFORMATION);
+							a.setTitle("CPF NÃO CADASTRADO");
+							a.setHeaderText(null);
+							a.setContentText("Este CPF ainda não está no sistema.");
+							a.showAndWait();
+						}
+						else{
+							//random
+							int n = new Random().nextInt(100);
+							String sqlBuscaReserva = "SELECT numReserva FROM Reserva "
+									+ "WHERE idHotel = "+nomeDoHotel.getText().split(",")[1]+" AND numReserva = "+n;
+							try{
+								nRes = Consultor.retornaListConsulta(sqlBuscaReserva);
+							} catch (Exception e4){
+								e4.printStackTrace();
+							}
+							//reserva
+							if(nRes.isEmpty()){
+								String sqlReserva = "INSERT INTO Reserva VALUES ("
+										+n+", '"+CRcpfT.getText()+"', "+numeroDoQuarto.getText().split(",")[1]+", "
+										+nomeDoHotel.getText().split(",")[1]+", '"+formatter.format(SHdata1.getValue())+"', '"
+										+formatter.format(SHdata2.getValue())+"')";
+								try{
+									Consultor.executaUpdate(sqlReserva);
+									Alert a = new Alert(AlertType.INFORMATION);
+									a.setTitle("RESERVA CADASTRADO");
+									a.setHeaderText(null);
+									a.setContentText("Seu quarto foi reservado.");
+									a.showAndWait();
+								} catch (Exception e4){
+									e4.printStackTrace();
+								}
+							}
+						}
+					}
+				});
 	}
 }
