@@ -1,8 +1,17 @@
+import javax.swing.JOptionPane;
+import javax.swing.plaf.OptionPaneUI;
+
+
+
+
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import javafx.application.*;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -193,38 +202,82 @@ public class Sistema extends Application {
 		});
 		
 			CPok.setOnAction((event) -> {
-				String sqlCadastra = new String();
-				if(CPcombo.getValue().equals("Turista")){
-					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
-										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
-										"', 'TURISTA', '"+CPnacT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
+				//verifica se existe o cpf
+				String queryVerificacao = "select nome from pessoa where CPF_Passaporte = '"+CPcpfT.getText()+"'";
+				Boolean alterar = false;
+				try {
+					ObservableList<String> pessoaIncluir = Consultor.retornaListConsulta(queryVerificacao);
+					if (!pessoaIncluir.isEmpty()){
+						alterar = true;
+						Alert a = new Alert(AlertType.INFORMATION);
+						a.setTitle("CPF Existente");
+						a.setHeaderText(null);
+						a.setContentText("CPF já existe");
+						a.showAndWait();
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				else if(CPcombo.getValue().equals("Comissão")){
-					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade, idModalidade, pais) "+
-										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
-										"', 'COMISSAO', '"+CPnacT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO Comissao VALUES ('"+CPcpfT.getText()+"', "+CPmodT.getText()+", '"+CPpaisT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-				}
-				else if(CPcombo.getValue().equals("Taxista")){
-					sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
-										"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
-										"', 'TAXISTA', '"+CPnacT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO Taxista VALUES ('"+CPcpfT.getText()+"', '"+CPcelT.getText()+"', '"
-										+CPhabT.getText()+"', '"+CPplacaT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO Carro VALUES ('"+CPplacaT.getText()+"', '"+CPcarT.getText()+"', '"+CPopT.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
-					sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
-					Consultor.executaUpdate(sqlCadastra);
+				
+
+				if(!alterar){
+					String sqlCadastra = new String();
+					if(CPcombo.getValue().equals("Turista")){
+						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
+											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+											"', 'TURISTA', '"+CPnacT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+						
+					}
+					else if(CPcombo.getValue().equals("Comissão")){
+						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade, idModalidade, pais) "+
+											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+											"', 'COMISSAO', '"+CPnacT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+						sqlCadastra = "INSERT INTO Comissao VALUES ('"+CPcpfT.getText()+"', "+CPmodT.getText()+", '"+CPpaisT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
 					
+					}
+					else if(CPcombo.getValue().equals("Taxista")){
+						sqlCadastra = "INSERT INTO Pessoa (nome, CPF_Passaporte, RG, tipoPessoa, nacionalidade) "+
+											"VALUES ('"+CPnomeT.getText()+"', '"+CPcpfT.getText()+"', '"+CPrgT.getText()+
+											"', 'TAXISTA', '"+CPnacT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+						sqlCadastra = "INSERT INTO Taxista VALUES ('"+CPcpfT.getText()+"', '"+CPcelT.getText()+"', '"
+											+CPhabT.getText()+"', '"+CPplacaT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+						sqlCadastra = "INSERT INTO Carro VALUES ('"+CPplacaT.getText()+"', '"+CPcarT.getText()+"', '"+CPopT.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+						
+					}
+					if(!idioma1.getText().isEmpty()){
+						sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma1.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+					}
+					
+					if(!idioma2.getText().isEmpty()){
+						sqlCadastra = "INSERT INTO IdiomaFalado VALUES ('"+CPcpfT.getText()+"', '"+idioma2.getText()+"')";
+						Consultor.executaUpdate(sqlCadastra);
+					}
+					Alert a = new Alert(AlertType.INFORMATION);
+					a.setTitle("Cadastro concluido");
+					a.setHeaderText(null);
+					a.setContentText("Pessoa cadastrada com sucesso");
+					a.showAndWait();
+					CPnomeT.clear();
+					CPcpfT.clear();
+					CPrgT.clear();
+					CPnacT.clear();
+					CPmodT.clear();
+					CPpaisT.clear();
+					CPcelT.clear();
+					CPhabT.clear();
+					CPplacaT.clear();
+					CPcarT.clear();
+					CPopT.clear();
+					idioma1.clear();
+					idioma2.clear();
 				}
 		});
 		
