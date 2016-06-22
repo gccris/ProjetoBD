@@ -1,17 +1,22 @@
-import javax.swing.JOptionPane;
-import javax.swing.plaf.OptionPaneUI;
-
-
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import javafx.application.*;
-import javafx.collections.ObservableList;
+import javafx.collections.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -430,7 +435,178 @@ public class Sistema extends Application {
 		Label SQtitulo = new Label("CONSULTAR QUARTOS");
 		SQtitulo.setFont(new Font(20));
 		
-		//TODO: TABLE
+		// CONSULTA TAXIS
+		Label lblDescricao = new Label("Insira seu cpf para verificacao de taxistas disponíveis do seu idioma");
+		Label lblIdiomaFalado = new Label("Cpf da pessoa para consulta de taxis: ");
+		TextField txtCpf = new TextField();
+		Button btnConsultarIdioma = new Button("Consultar taxis");
+		Label lblInforma = new Label();
+		Label lblIdioma = new Label();
+		Label lblCPF = new Label();
+		VBox vConsultaIdioma = new VBox(4);
+		HBox hConsultaIdioma = new HBox(3);
+		vConsultaIdioma.getChildren().addAll(lblDescricao);
+		vConsultaIdioma.getChildren().add(lblInforma);
+		hConsultaIdioma.getChildren().addAll(lblIdiomaFalado,txtCpf);
+		hConsultaIdioma.getChildren().addAll(btnConsultarIdioma);
+		vConsultaIdioma.getChildren().add(hConsultaIdioma);
+		btnConsultarIdioma.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent e) {
+		    	TableView<String> tbTaxistas = new TableView<String>(); 
+		    	if(!txtCpf.getText().equals("")) {
+		    		lblInforma.setText("");
+		    		
+		    		try {
+						tbTaxistas = Consultor.retornaTabelaConsulta
+						("select t.*,i.idioma from taxista t join idiomafalado i on i.cpfpessoa = t.cpf where i.idioma in (select idioma from idiomafalado where cpfpessoa= '"+txtCpf.getText()+"')");
+					} catch (SQLException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+		    		if(vConsultaIdioma.getChildren().size() == 3) {
+		    			vConsultaIdioma.getChildren().add(tbTaxistas);
+		    		}
+		    		else {
+		    			vConsultaIdioma.getChildren().remove(3);
+		    			vConsultaIdioma.getChildren().add(tbTaxistas);
+		    		}
+		    		
+		    		if(!tbTaxistas.getItems().isEmpty()) {
+		    			lblInforma.setText("Clique duas vezes no taxista para escolher.");
+			    		tbTaxistas.setOnMousePressed(new EventHandler<MouseEvent>() {
+			    		    @Override 
+			    		    public void handle(MouseEvent event) {
+			    		    	
+			    		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+				    		    	TableView<String> tbEstadios = new TableView<String>();
+				    				TableView<String> tbHoteis = new TableView<String>();
+				    				try {
+										tbHoteis = Consultor.retornaTabelaConsulta("SELECT * FROM HOTEL");
+										tbEstadios = Consultor.retornaTabelaConsulta("SELECT * FROM ESTADIO");
+									} catch (SQLException e2) {
+										// TODO Auto-generated catch block
+										e2.printStackTrace();
+									}
+				    				
+				    				Button btnHotelEstadio = new Button("Hotel -> Estadio");
+				    				Button btnEstadioHotel = new Button("Estadio -> Hotel");
+				    				Label lblEstadio = new Label();
+				    				Label lblHotel = new Label();
+				    				
+				    				Node node = ((Node) event.getTarget()).getParent();
+			    		            TableRow row;
+			    		            if (node instanceof TableRow) {
+			    		                row = (TableRow) node;
+			    		            } else {
+			    		                row = (TableRow) node.getParent();
+			    		            }
+			    		            
+			    		            if(row.getItem() != null) {
+			    		            	lblCPF.setText(row.getItem().toString().split(",")[0].substring(1));
+			    		            	lblIdioma.setText(row.getItem().toString().split(",")[5].substring(1,row.getItem().toString().split(",")[5].indexOf(']')));
+			    		            	vConsultaIdioma.getChildren().remove(3);	
+				    				
+					    				tbEstadios.setOnMousePressed(new EventHandler<MouseEvent>() {
+					    				    @Override 
+					    				    public void handle(MouseEvent event) {
+					    				        if (event.isPrimaryButtonDown()) {
+					    				            Node node = ((Node) event.getTarget()).getParent();
+					    				            TableRow row;
+					    				            if (node instanceof TableRow) {
+					    				                row = (TableRow) node;
+					    				            } else {
+					    				                // clicking on text part
+					    				                row = (TableRow) node.getParent();
+					    				            }
+					    				            if(row.getItem() != null) {
+					    				            	lblEstadio.setText(row.getItem().toString().split(",")[0].substring(1));
+					    				            	lblEstadio.setVisible(false);
+					    				            }
+					    				        }
+					    				    }
+					    				});
+					    				
+					    				tbHoteis.setOnMousePressed(new EventHandler<MouseEvent>() {
+					    				    @Override 
+					    				    public void handle(MouseEvent event) {
+					    				        if (event.isPrimaryButtonDown()) {
+					    				            Node node = ((Node) event.getTarget()).getParent();
+					    				            TableRow row;
+					    				            if (node instanceof TableRow) {
+					    				                row = (TableRow) node;
+					    				            } else {
+					    				                // clicking on text part
+					    				                row = (TableRow) node.getParent();
+					    				            }
+					    				            if(row.getItem() != null) {
+					    				            	lblHotel.setText(row.getItem().toString().split(",")[0].substring(1));
+					    				            	lblHotel.setVisible(false);
+					    				            }
+					    				        }
+					    				    }
+					    				});  
+				    		    		
+				    		            btnHotelEstadio.setOnAction(new EventHandler<ActionEvent>() {
+					    				    @Override public void handle(ActionEvent e) {
+					    				        if(!lblEstadio.getText().equals("") && !lblHotel.getText().equals("")) {
+					    				        	ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+					    				        	cb.abrirConexao();
+					    				        	Random rd = new Random();
+					    				        	try {
+					    				        		SimpleDateFormat format = new SimpleDateFormat( "dd/MM/yyyy HH:mm:ss" );
+					    				        		Integer distancia = rd.nextInt(500);
+					    				        		Integer dur = rd.nextInt(30);
+					    				        		String insertion = new String("INSERT INTO CORRIDA VALUES ('"+format.format(new Date())+"','"+lblCPF.getText()+"', '"+txtCpf.getText()+"',"+lblHotel.getText()+",null,null,"+lblEstadio.getText()+","+dur+","+distancia+","+dur*3.4+",'"+lblIdioma.getText()+"')");
+					    								cb.executaUpdate(insertion);
+					    								lblInforma.setText("CORRIDA INSERIDA COM SUCESSO");
+					    								lblInforma.setVisible(true);
+					    							} catch (SQLException e1) {
+					    								lblInforma.setText("HOUVE UM PROBLEMA NA INSERÇÃO DA CORRIDA");
+					    								lblInforma.setVisible(true);
+					    							}
+					    				        }   	
+					    				    }
+					    				});
+				    		            
+				    		            btnEstadioHotel.setOnAction(new EventHandler<ActionEvent>() {
+					    				    @Override public void handle(ActionEvent e) {
+					    				        if(!lblEstadio.getText().equals("") && !lblHotel.getText().equals("")) {
+					    				        	ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
+					    				        	cb.abrirConexao();
+					    				        	try {
+					    				        		Random rd = new Random();
+					    				        		Integer distancia = rd.nextInt(500);
+					    				        		Integer dur = rd.nextInt(30);
+					    				        		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+					    				        		String insertion = "INSERT INTO CORRIDA VALUES ('"+format.format(new Date())+"','"+lblCPF.getText()+"', '"+txtCpf.getText()+"',null,"+lblEstadio.getText()+","+lblHotel.getText()+",null,"+dur+","+distancia+","+dur*3.4+",'"+lblIdioma.getText()+"')";
+					    								cb.executaUpdate(insertion);
+					    								lblInforma.setText("CORRIDA INSERIDA COM SUCESSO");
+					    								lblInforma.setVisible(true);
+					    							} catch (SQLException e1) {
+					    								lblInforma.setText("HOUVE UM PROBLEMA NA INSERÇÃO DA CORRIDA");
+					    								lblInforma.setVisible(true);
+					    							}
+					    				        }   	
+					    				    }
+					    				});
+				    		            btnConsultarIdioma.setVisible(false);
+				    		            vConsultaIdioma.getChildren().addAll(tbEstadios, tbHoteis,btnEstadioHotel,btnHotelEstadio,lblEstadio,lblHotel);
+				    		    		txtCpf.setEditable(false);
+				    		    		lblInforma.setVisible(false);
+				    		    		lblDescricao.setText("Escolha o hotel e o estadio e clique no botao com a rota");
+			    		            }
+			    		        }
+			    		    }
+			    		});
+		    		}
+		    	}
+		    	else {
+		    		lblInforma.setText("Insira um cpf ou numero de passaporte no campo sugerido.");
+		    		vConsultaIdioma.getChildren().add(lblInforma);
+		    	}
+		    }
+		});
+		// ------------ FIm do cadastro de corridas ----------- //
 		
 		Button SQres = new Button("RESERVAR");
 		
@@ -441,19 +617,19 @@ public class Sistema extends Application {
 		// CADASTRA RESERVA ------------------------------
 		Label CRtitulo = new Label("CADASTRAR RESERVA");
 		CRtitulo.setFont(new Font(20));
-		
+				
 		Label CRcpf = new Label("CPF:");
 		TextField CRcpfT = new TextField();
 		HBox CRcpfH = new HBox(10);
 		CRcpfH.getChildren().addAll(CRcpf, CRcpfT);
 		CRcpfH.setAlignment(Pos.CENTER);
-		
+				
 		Button CRok = new Button("CONFIRMAR");
-		
+				
 		VBox layoutCR = new VBox(20);
 		layoutCR.getChildren().addAll(CRtitulo, CRcpfH, CRok);
 		layoutCR.setAlignment(Pos.TOP_CENTER);
-		
+				
 		// LAYOUT PRINCIPAL -------------------------------
 		MenuBar navbar = new MenuBar();
 		Menu navP = new Menu("Pessoas");
@@ -495,7 +671,7 @@ public class Sistema extends Application {
 		
 		navCcon.setOnAction((event) -> {
 			principal.getChildren().clear();
-			//principal.getChildren().addAll(navbar, XXX);
+			principal.getChildren().addAll(navbar, vConsultaIdioma);
 		});
 		
 		navOcon.setOnAction((event) -> {

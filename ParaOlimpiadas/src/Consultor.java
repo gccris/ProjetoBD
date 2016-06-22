@@ -13,11 +13,11 @@ import javafx.util.Callback;
 
 public class Consultor {
 
-	private static String ip = "grad.icmc.usp.br";
-	private static String porta = "15215";
-	private static String type = "orcl";
-	private static String login = "g8937159";
-	private static String senha = "g8937159";
+	private static String ip = "192.168.1.103";
+	private static String porta = "1521";
+	private static String type = "xe";
+	private static String login = "system";
+	private static String senha = "123456";
 	
 	//ConexaoBanco cb = new ConexaoBanco("192.168.1.103","1521","xe","system","123456");
 	public static TableView retornaTabelaConsulta(String query) throws SQLException {
